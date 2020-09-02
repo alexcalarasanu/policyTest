@@ -23,8 +23,9 @@ class BasketTest {
                 multipleItemsPricedByWeight(),
                 buyOneGetOneFreeWithTwoOfTheSameItems(),
                 buyOneGetOneFreeWithDifferentItems(),
-                buyOneGetOneFreeWithOddNumberOfItemsOnOffer()
-
+                buyOneGetOneFreeWithOddNumberOfItemsOnOffer(),
+                kiloHalfPrice(),
+                kiloHalfPriceOneKiloAndAHalf()
         );
     }
 
@@ -63,6 +64,18 @@ class BasketTest {
         return Arguments.of("buy one get one free - odd number of items", "1.00", Arrays.asList(aCanOfBeans(), aCanOfBeans(), aCanOfBeans()));
     }
 
+    private static Arguments kiloHalfPrice() {
+        return Arguments.of("kiloHalfPrice", "0.50",
+                Collections.singleton(aKilogramOfCarrots())
+        );
+    }
+
+    private static Arguments kiloHalfPriceOneKiloAndAHalf() {
+        return Arguments.of("kiloHalfPriceOneKiloAndAHalf", "1.00",
+                Collections.singleton(aKilogramAndAHalfOfCarrots())
+        );
+    }
+
     private static Item aPintOfMilk() {
         return new Product(new BigDecimal("0.49"), DiscountType.NONE, 1).oneOf();
     }
@@ -83,6 +96,10 @@ class BasketTest {
         return new WeighedProduct(new BigDecimal("2.99"), DiscountType.NONE, 4);
     }
 
+    private static WeighedProduct aKiloOfCarrots() {
+        return new WeighedProduct(new BigDecimal("1.00"), DiscountType.ONE_KILO_HALF_PRICE, 8);
+    }
+
     private static Item aCanOfBeans() {
         return new Product(new BigDecimal("0.50"), DiscountType.BUY_ONE_GET_ONE_FREE, 5).oneOf();
     }
@@ -90,6 +107,14 @@ class BasketTest {
 
     private static Item twoHundredGramsOfPickAndMix() {
         return aKiloOfPickAndMix().weighing(new BigDecimal(".2"));
+    }
+
+    private static Item aKilogramOfCarrots() {
+        return aKiloOfCarrots().weighing(new BigDecimal("1.00"));
+    }
+
+    private static Item aKilogramAndAHalfOfCarrots() {
+        return aKiloOfCarrots().weighing(new BigDecimal("1.50"));
     }
 
     @DisplayName("basket provides its total value when containing...")

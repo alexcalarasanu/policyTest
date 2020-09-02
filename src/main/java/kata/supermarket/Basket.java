@@ -1,6 +1,7 @@
 package kata.supermarket;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -59,6 +60,8 @@ public class Basket {
                         case THREE_FOR_THE_PRICE_OF_TWO:
                             break;
                         case ONE_KILO_HALF_PRICE:
+                            totalDiscounts = totalDiscounts.add(discountCalculator.calculateOneKiloHalfPrice(item));
+                            break;
                         default:
                             break;
                     }
@@ -81,6 +84,21 @@ public class Basket {
                 discountAmount = discountAmount.subtract(item.price()).divide(BigDecimal.valueOf(2));
             }
             return discountAmount;
+        }
+
+        public BigDecimal calculateOneKiloHalfPrice(Item item) {
+            if(item instanceof ItemByWeight){
+                // We have to use BigDecimal.valueOf(100, 2) because the weight is already scaled and BigDecimal.ONE is 1, not 1.00
+                BigDecimal weight = ((ItemByWeight) item).getWeightInKilos();
+                if(weight.equals(BigDecimal.valueOf(100, 2))){
+                    return item.price().divide(BigDecimal.valueOf(2), 2, RoundingMode.UP);
+                } else {
+                    //TODO: implement for weight != 1.00
+                  return BigDecimal.ZERO;
+                }
+
+            }
+            return BigDecimal.ZERO;
         }
 
     }
