@@ -25,7 +25,10 @@ class BasketTest {
                 buyOneGetOneFreeWithDifferentItems(),
                 buyOneGetOneFreeWithOddNumberOfItemsOnOffer(),
                 kiloHalfPrice(),
-                kiloHalfPriceOneKiloAndAHalf()
+                kiloHalfPriceOneKiloAndAHalf(),
+                twoForOnePoundWithTwoOfTheSameItems(),
+                twoForOnePoundWithDifferentItems(),
+                twoForOnePoundWithOddNumberOfItemsOnOffer()
         );
     }
 
@@ -76,6 +79,18 @@ class BasketTest {
         );
     }
 
+    private static Arguments twoForOnePoundWithTwoOfTheSameItems() {
+        return Arguments.of("two for one pound - two of the same items", "1.00", Arrays.asList(aCanOfTomatoSoup(), aCanOfTomatoSoup()));
+    }
+
+    private static Arguments twoForOnePoundWithDifferentItems() {
+        return Arguments.of("two for one pound - different items", "2.55", Arrays.asList(aCanOfTomatoSoup(), aCanOfTomatoSoup(), aPackOfDigestives()));
+    }
+
+    private static Arguments twoForOnePoundWithOddNumberOfItemsOnOffer() {
+        return Arguments.of("two for one pound - odd number of items", "1.75", Arrays.asList(aCanOfTomatoSoup(), aCanOfTomatoSoup(), aCanOfTomatoSoup()));
+    }
+
     private static Item aPintOfMilk() {
         return new Product(new BigDecimal("0.49"), DiscountType.NONE, 1).oneOf();
     }
@@ -102,6 +117,10 @@ class BasketTest {
 
     private static Item aCanOfBeans() {
         return new Product(new BigDecimal("0.50"), DiscountType.BUY_ONE_GET_ONE_FREE, 5).oneOf();
+    }
+
+    private static Item aCanOfTomatoSoup() {
+        return new Product(new BigDecimal("0.75"), DiscountType.TWO_FOR_ONE_POUND, 6).oneOf();
     }
 
 

@@ -56,6 +56,7 @@ public class Basket {
                             totalDiscounts = totalDiscounts.add(discountCalculator.calculateBuyOneGetOneFree(item, itemCountToItemIdMap.get(itemId)));
                             break;
                         case TWO_FOR_ONE_POUND:
+                            totalDiscounts = totalDiscounts.add(discountCalculator.calculateTwoForOnePound(item, itemCountToItemIdMap.get(itemId)));
                             break;
                         case THREE_FOR_THE_PRICE_OF_TWO:
                             break;
@@ -101,5 +102,14 @@ public class Basket {
             return BigDecimal.ZERO;
         }
 
+        public BigDecimal calculateTwoForOnePound(Item item, Integer numberOfItems) {
+            BigDecimal discountAmount = item.price().multiply(BigDecimal.valueOf(numberOfItems));
+            if (numberOfItems % 2 == 0) {
+                discountAmount = discountAmount.subtract(BigDecimal.valueOf(numberOfItems / 2));
+            } else {
+                discountAmount = discountAmount.subtract(BigDecimal.valueOf(numberOfItems / 2).add(item.price()));
+            }
+            return discountAmount;
+        }
     }
 }
