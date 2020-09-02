@@ -1,7 +1,6 @@
 package kata.supermarket;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -15,23 +14,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BasketTest {
 
-    @DisplayName("basket provides its total value when containing...")
-    @MethodSource
-    @ParameterizedTest(name = "{0}")
-    void basketProvidesTotalValue(String description, String expectedTotal, Iterable<Item> items) {
-        final Basket basket = new Basket();
-        items.forEach(basket::add);
-        assertEquals(new BigDecimal(expectedTotal), basket.total());
-    }
-
     static Stream<Arguments> basketProvidesTotalValue() {
         return Stream.of(
-//                noItems(),
-//                aSingleItemPricedPerUnit(),
-//                multipleItemsPricedPerUnit(),
-//                aSingleItemPricedByWeight(),
-//                multipleItemsPricedByWeight(),
-                multipleItemsPricedPerUnit2()
+                noItems(),
+                aSingleItemPricedPerUnit(),
+                multipleItemsPricedPerUnit(),
+                aSingleItemPricedByWeight(),
+                multipleItemsPricedByWeight(),
+                buyOneGetOneFreeWithTwoOfTheSameItems(),
+                buyOneGetOneFreeWithDifferentItems(),
+                buyOneGetOneFreeWithOddNumberOfItemsOnOffer()
+
         );
     }
 
@@ -50,11 +43,6 @@ class BasketTest {
                 Arrays.asList(aPackOfDigestives(), aPintOfMilk()));
     }
 
-    private static Arguments multipleItemsPricedPerUnit2() {
-        return Arguments.of("multiple items priced per unit2", "3.10",
-                Arrays.asList(aPackOfDigestives(), aPackOfDigestives()));
-    }
-
     private static Arguments aSingleItemPricedPerUnit() {
         return Arguments.of("a single item priced per unit", "0.49", Collections.singleton(aPintOfMilk()));
     }
@@ -63,16 +51,28 @@ class BasketTest {
         return Arguments.of("no items", "0.00", Collections.emptyList());
     }
 
+    private static Arguments buyOneGetOneFreeWithTwoOfTheSameItems() {
+        return Arguments.of("buy one get one free - two of the same items", "0.50", Arrays.asList(aCanOfBeans(), aCanOfBeans()));
+    }
+
+    private static Arguments buyOneGetOneFreeWithDifferentItems() {
+        return Arguments.of("buy one get one free - different items", "0.99", Arrays.asList(aCanOfBeans(), aCanOfBeans(), aPintOfMilk()));
+    }
+
+    private static Arguments buyOneGetOneFreeWithOddNumberOfItemsOnOffer() {
+        return Arguments.of("buy one get one free - odd number of items", "1.00", Arrays.asList(aCanOfBeans(), aCanOfBeans(), aCanOfBeans()));
+    }
+
     private static Item aPintOfMilk() {
-        return new Product(new BigDecimal("0.49")).oneOf();
+        return new Product(new BigDecimal("0.49"), DiscountType.NONE, 1).oneOf();
     }
 
     private static Item aPackOfDigestives() {
-        return new Product(new BigDecimal("1.55")).oneOf();
+        return new Product(new BigDecimal("1.55"), DiscountType.NONE, 2).oneOf();
     }
 
     private static WeighedProduct aKiloOfAmericanSweets() {
-        return new WeighedProduct(new BigDecimal("4.99"));
+        return new WeighedProduct(new BigDecimal("4.99"), DiscountType.NONE, 3);
     }
 
     private static Item twoFiftyGramsOfAmericanSweets() {
@@ -80,10 +80,24 @@ class BasketTest {
     }
 
     private static WeighedProduct aKiloOfPickAndMix() {
-        return new WeighedProduct(new BigDecimal("2.99"));
+        return new WeighedProduct(new BigDecimal("2.99"), DiscountType.NONE, 4);
     }
+
+    private static Item aCanOfBeans() {
+        return new Product(new BigDecimal("0.50"), DiscountType.BUY_ONE_GET_ONE_FREE, 5).oneOf();
+    }
+
 
     private static Item twoHundredGramsOfPickAndMix() {
         return aKiloOfPickAndMix().weighing(new BigDecimal(".2"));
+    }
+
+    @DisplayName("basket provides its total value when containing...")
+    @MethodSource
+    @ParameterizedTest(name = "{0}")
+    void basketProvidesTotalValue(String description, String expectedTotal, Iterable<Item> items) {
+        final Basket basket = new Basket();
+        items.forEach(basket::add);
+        assertEquals(new BigDecimal(expectedTotal), basket.total());
     }
 }
