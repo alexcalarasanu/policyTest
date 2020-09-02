@@ -10,7 +10,17 @@ public class ItemByUnit implements Item {
         this.product = product;
     }
 
+
     public BigDecimal price() {
         return product.pricePerUnit();
+    }
+
+
+    public DiscountType discountType() {
+        return product.discountType();
+    }
+
+    public int itemId(){
+        return product.itemId();
     }
 }
