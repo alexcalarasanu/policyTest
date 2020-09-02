@@ -89,15 +89,13 @@ public class Basket {
 
         public BigDecimal calculateOneKiloHalfPrice(Item item) {
             if(item instanceof ItemByWeight){
-                // We have to use BigDecimal.valueOf(100, 2) because the weight is already scaled and BigDecimal.ONE is 1, not 1.00
                 BigDecimal weight = ((ItemByWeight) item).getWeightInKilos();
-                if(weight.equals(BigDecimal.valueOf(100, 2))){
+                //We have to use BigDecimal.valueOf(000, 2) because the weight is already scaled and BigDecimal.ZERO is not 0.00
+                //This will work with all values that are not fractions
+                if( weight.remainder(BigDecimal.ONE).equals(BigDecimal.valueOf(000,2))){
                     return item.price().divide(BigDecimal.valueOf(2), 2, RoundingMode.UP);
-                } else {
-                    //TODO: implement for weight != 1.00
-                  return BigDecimal.ZERO;
                 }
-
+                //TODO: add implementation for weights that are not exact in kilos
             }
             return BigDecimal.ZERO;
         }
